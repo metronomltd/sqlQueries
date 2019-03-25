@@ -1,4 +1,4 @@
-/ SELECT * FROM [dbo].[OJDT] T0 /
+-- SELECT * FROM [dbo].[OJDT] T0 
 
 declare @OpenDate as datetime 
 declare @OpenDate2 as datetime 
@@ -14,37 +14,32 @@ set @TTaxDate = /* T0.[TaxDate] */ N'[%3]'
 set @TransID1 = /* T0.[TransID] */ '[%4]'
 
 SELECT 
-      T0.[TransId],
+      T0.[TransId] AS 'TransId',
       CASE 
           when T0.TransType =18 then T2.U_Company 
           else '30' 
-      END as 'Company',
+      END AS 'Company',
       CASE 
           when T0.TransType =18 then T2.U_Dept
           else Right(LEFT (T1.U_Account, 8),4) 
-      END 'Department',
+      END AS 'Department',
       CASE 
-          when T1.[ShortName] In 
-                              (
-                                select CardCode
-                                from OCRD 
-                                where OCRD.CardType = 'S'
-                                ) 
+          when T3.CardType = 'S'          
           then '21005' 
           else T1.[ShortName] 
-      END 'Account',
+      END AS 'Account',
       CASE 
         when T0.TransType =18 then T2.U_Product 
         else Right(LEFT (T1.U_Account, 0),3) 
-      end 'Product', 
+      end AS 'Product', 
       'Future'= '0000',
-      T1.[Debit] ' Debit ', 
-      T1.[Credit] ' Credit ',
-      T1.[U_RportNum] 'Line Description',
-      T2.[U_NPO] 'PO number',
-      T1.ContraAct,
-      T0.TaxDate 'Tax Date',
-      T0.RefDate 'Invoice Date'
+      T1.[Debit] AS 'Debit', 
+      T1.[Credit] AS 'Credit',
+      T1.[U_RportNum] AS 'Line Description',
+      T2.[U_NPO] AS 'PO number',
+      T1.ContraAct AS 'ContraAct',
+      T0.TaxDate AS 'Tax Date',
+      T0.RefDate AS 'Invoice Date'
 FROM OJDT T0  
   INNER JOIN JDT1 T1 ON T0.[TransId] = T1.[TransId] 
   LEFT JOIN (
